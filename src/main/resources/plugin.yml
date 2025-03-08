@@ -1,0 +1,12 @@
+name: "${plugin_name}"
+version: "${plugin_version}"
+main: org.example.PluginEntry
+description: "Example plugin written in Scala3 for PaperMC!"
+author: [ "PaperMC","You!" ]
+website: https://papermc.io
+api-version: '1.21.4'
+
+libraries:
+  - org.scala-lang:scala3-library_3:${scala3}
+  - org.scala-lang:scala-library:${scala2}
+  - com.typesafe.scala-logging:scala-logging_3:3.9.5

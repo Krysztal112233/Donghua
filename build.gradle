@@ -1,0 +1,56 @@
+plugins {
+    id "java-library"
+    id "scala"
+    id "io.github.cosmicsilence.scalafix" version '0.2.+'
+    id "io.papermc.paperweight.userdev" version "2.0.0-beta.14"
+    id "xyz.jpenilla.run-paper" version "2.3.1"
+}
+
+version = plugin_version
+group = plugin_group_id
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+base {
+    archivesName = plugin_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+dependencies {
+    paperweight.paperDevBundle("${minecraft}-R0.1-SNAPSHOT")
+
+    implementation("org.scala-lang:scala3-library_3:${scala3}")
+    implementation("org.scala-lang:scala-library:${scala2}")
+    implementation("com.typesafe.scala-logging:scala-logging_3:3.9.5")
+}
+
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+            plugin_name     :plugin_name,
+            plugin_id       :plugin_id,
+            plugin_version  :plugin_version,
+
+            scala3          :scala3,
+            scala2          :scala2,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['plugin.yml']) {
+        expand replaceProperties
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+tasks {
+  runServer {
+    minecraftVersion(minecraft)
+  }
+}
+
