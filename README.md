@@ -1,3 +1,3 @@
-# paper-scala-template
+# Donghua
 
-Writing PaperMC plugin in Scala3!
+A pretty simple animation library for PaperMC

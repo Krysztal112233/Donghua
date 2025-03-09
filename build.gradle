@@ -4,6 +4,7 @@ plugins {
     id "io.github.cosmicsilence.scalafix" version '0.2.+'
     id "io.papermc.paperweight.userdev" version "2.0.0-beta.14"
     id "xyz.jpenilla.run-paper" version "2.3.1"
+    id "maven-publish"
 }
 
 version = plugin_version
@@ -26,6 +27,12 @@ dependencies {
     implementation("org.scala-lang:scala3-library_3:${scala3}")
     implementation("org.scala-lang:scala-library:${scala2}")
     implementation("com.typesafe.scala-logging:scala-logging_3:3.9.5")
+    
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+	annotationProcessor 'org.projectlombok:lombok:1.18.36'
+	
+	testCompileOnly 'org.projectlombok:lombok:1.18.36'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
 }
 
 tasks.withType(ProcessResources).configureEach {
@@ -46,6 +53,35 @@ tasks.withType(ProcessResources).configureEach {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+tasks.withType(ScalaCompile).configureEach {
+    scalaCompileOptions.additionalParameters = [
+        "-Wunused:imports"
+    ]
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = project.plugin_group_id
+            artifactId = project.plugin_id
+            version = project.plugin_version
+            artifact(tasks.jar)
+        }
+    }
+
+	repositories {
+		if (System.getenv('MAVEN_URL')) {
+			maven {
+				url System.getenv('MAVEN_URL')
+				credentials {
+					username System.getenv('MAVEN_USERNAME')
+					password System.getenv('MAVEN_PASSWORD')
+				}
+			}
+		}
+	}
 }
 
 tasks {
